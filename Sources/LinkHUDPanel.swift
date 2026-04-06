@@ -126,7 +126,7 @@ final class LinkHUDPanel: NSObject, HUDKeyPanelDelegate {
         searchField.isBordered = false
         searchField.drawsBackground = false
         searchField.focusRingType = .none
-        searchField.textColor = .white
+        searchField.textColor = .labelColor
         searchField.delegate = self
         searchField.target = self
         searchField.action = #selector(searchAction)
