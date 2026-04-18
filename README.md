@@ -8,9 +8,15 @@ A macOS menu bar app that adds keyboard-driven navigation to any web browser. Go
 
 ## Installation
 
-1. Double-click `BrowserCommander.app` to launch it
-2. A globe icon appears in the menu bar
-3. Grant Accessibility permission when prompted
+Two formats on every release — both signed and notarised, pick whichever suits:
+
+- **[Installer (`.pkg`)](https://github.com/PerpetualBeta/BrowserCommander/releases/latest/download/BrowserCommander.pkg)** — recommended for first-time installs. Double-click to run; macOS Installer places the app in `/Applications` without quarantine or App Translocation.
+- **[Download (`.zip`)](https://github.com/PerpetualBeta/BrowserCommander/releases/latest)** — unzip and drag `BrowserCommander.app` to your Applications folder.
+
+After installation:
+
+1. Launch Browser Commander — a globe icon appears in the menu bar
+2. Grant Accessibility permission when prompted
 
 ## How It Works
 
