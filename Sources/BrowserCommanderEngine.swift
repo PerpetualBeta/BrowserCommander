@@ -186,16 +186,38 @@ final class BrowserCommanderEngine {
     func updateLinkHUDHotkey(keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
         _linkHUDKeyCode = keyCode
         _linkHUDModifiers = modifiers
+        republishHotkeys()
     }
 
     func updateGoBackHotkey(keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
         _goBackKeyCode = keyCode
         _goBackModifiers = modifiers
+        republishHotkeys()
     }
 
     func updateGoForwardHotkey(keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
         _goForwardKeyCode = keyCode
         _goForwardModifiers = modifiers
+        republishHotkeys()
+    }
+
+    /// Publish the current set of bindings to the JorvikKit registry so other
+    /// apps (ShortcutHUD) can list them. All three bindings are browser-only.
+    private func republishHotkeys() {
+        JorvikHotkeyRegistry.publish([
+            JorvikHotkey(actionTitle: "Show Link HUD",
+                         keyCode: _linkHUDKeyCode,
+                         modifiers: _linkHUDModifiers,
+                         activeContext: .browser),
+            JorvikHotkey(actionTitle: "Go Back",
+                         keyCode: _goBackKeyCode,
+                         modifiers: _goBackModifiers,
+                         activeContext: .browser),
+            JorvikHotkey(actionTitle: "Go Forward",
+                         keyCode: _goForwardKeyCode,
+                         modifiers: _goForwardModifiers,
+                         activeContext: .browser),
+        ])
     }
 
     func start() {
@@ -218,6 +240,8 @@ final class BrowserCommanderEngine {
             _goForwardKeyCode = UInt16(UserDefaults.standard.integer(forKey: "goForwardKeyCode"))
             _goForwardModifiers = NSEvent.ModifierFlags(rawValue: UInt(UserDefaults.standard.integer(forKey: "goForwardModifiers")))
         }
+
+        republishHotkeys()
 
         _onAction = { [weak self] action in
             Task { @MainActor in
