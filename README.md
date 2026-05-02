@@ -64,7 +64,7 @@ Right-click the globe icon and choose **Settings...** to configure:
 - **Go Forward shortcut** — customise the go forward hotkey (default: Shift+Backspace)
 - **Link Navigator shortcut** — customise the link navigator hotkey (default: ⌃⌥⇧⌘L)
 - **Accessibility permission** — status display and grant button
-- **Menu bar icon pill** — optional coloured background for improved contrast on custom wallpapers
+- **Menu bar icon pill** — optional grey background for stronger contrast on busy or wallpaper-tinted menu bars (off by default)
 - **Launch at Login** — start automatically when you log in
 - **Auto-update** — check for new versions on a configurable schedule
 
