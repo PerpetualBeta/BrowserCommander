@@ -14,9 +14,14 @@ RESOURCES="$CONTENTS/Resources"
 FRAMEWORKS="$CONTENTS/Frameworks"
 
 echo "==> Building ${APP_NAME}..."
+# Note: -framework Sparkle isn't needed explicitly — `import Sparkle`
+# triggers Swift auto-link, which contributes the -framework directive
+# itself. We just need to give swiftc + ld the framework search path
+# (so the module is found at compile and the .framework at link) plus
+# the runtime rpath so the embedded copy resolves at launch.
 swift build -c release \
     -Xswiftc -F -Xswiftc "$SCRIPT_DIR" \
-    -Xswiftc -framework -Xswiftc Sparkle \
+    -Xlinker -F -Xlinker "$SCRIPT_DIR" \
     -Xlinker -rpath -Xlinker @executable_path/../Frameworks \
     2>&1
 
