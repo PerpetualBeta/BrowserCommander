@@ -11,8 +11,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
     let engine = BrowserCommanderEngine()
     let updateChecker = JorvikUpdateChecker(repoName: "BrowserCommander")
-    let sparkleUserDriverDelegate = BrowserCommanderUserDriverDelegate()
-    lazy var sparkleUpdater = SPUStandardUpdaterController(
+
+    // @ObservationIgnored because @Observable's macro transforms stored
+    // properties into computed properties with init accessors, which is
+    // incompatible with `lazy`. These aren't observable state anyway —
+    // Sparkle drives its own UI, no SwiftUI needs to react to changes.
+    @ObservationIgnored let sparkleUserDriverDelegate = BrowserCommanderUserDriverDelegate()
+    @ObservationIgnored lazy var sparkleUpdater = SPUStandardUpdaterController(
         startingUpdater: true,
         updaterDelegate: nil,
         userDriverDelegate: sparkleUserDriverDelegate
