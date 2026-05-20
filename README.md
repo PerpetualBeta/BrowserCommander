@@ -91,9 +91,11 @@ Browser Commander uses Swift Package Manager. No Xcode project is required.
 ```bash
 git clone https://github.com/PerpetualBeta/BrowserCommander.git
 cd BrowserCommander
-./build.sh
-open _BuildOutput/BrowserCommander.app
+gmake build
+open .build/BrowserCommander.app
 ```
+
+Requires GNU Make 4.x — `brew install make` installs it as `gmake`.
 
 ---
 
