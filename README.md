@@ -64,8 +64,11 @@ Right-click the globe icon and choose **Settings...** to configure:
 - **Go Forward shortcut** — customise the go forward hotkey (default: Shift+Backspace)
 - **Link Navigator shortcut** — customise the link navigator hotkey (default: ⌃⌥⇧⌘L)
 - **Accessibility permission** — status display and grant button
+- **Show icon in menu bar** — hide the globe status icon while Browser Commander keeps running (still reachable via its keyboard shortcut); the choice persists across launches, including login auto-start. *Shown only on macOS 14–15 — on macOS 26 (Tahoe) and later, use System Settings → Menu Bar, which provides this natively.*
 - **Menu bar icon pill** — optional grey background for stronger contrast on busy or wallpaper-tinted menu bars (off by default)
 - **Launch at Login** — start automatically when you log in
+
+If you've hidden the status icon and want it back, simply re-open Browser Commander from your Applications folder — it reappears immediately.
 
 Auto-updates are handled by Sparkle. Use the **Check for Updates…** entry in the right-click menu to check on demand; Sparkle's prompt offers an "Automatically download and install updates in the future" checkbox the first time an update is available.
 
