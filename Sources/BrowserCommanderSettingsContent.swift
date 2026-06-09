@@ -74,6 +74,8 @@ struct BrowserCommanderSettingsContent: View {
             }
         }
 
+        MenuBarVisibilitySettings()
+
         MenuBarPillSettings {
             delegate.refreshPill()
         }

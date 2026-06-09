@@ -8,7 +8,7 @@ import Sparkle
 @Observable
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
-    private var statusItem: NSStatusItem!
+    private var statusItem: NSStatusItem?
     let engine = BrowserCommanderEngine()
 
     // @ObservationIgnored because @Observable's macro transforms stored
@@ -98,13 +98,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         NSApp.setActivationPolicy(.accessory)
 
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        updateIcon()
+        createStatusItem()
         _ = sparkleUpdater  // forces lazy init so Sparkle starts at launch
-
-        let menu = NSMenu()
-        menu.delegate = self
-        statusItem.menu = menu
 
         engine.start()
 
@@ -125,9 +120,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         ) { [weak self] _ in
             Task { @MainActor in self?.updateIcon() }
         }
+
+        NotificationCenter.default.addObserver(
+            forName: JorvikStatusItemVisibility.didChangeNotification,
+            object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.applyStatusItemVisibility() }
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) { engine.stop() }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        JorvikStatusItemVisibility.handleReopen()
+        return true
+    }
+
+    private func createStatusItem() {
+        guard JorvikStatusItemVisibility.isVisible else { return }
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        let menu = NSMenu()
+        menu.delegate = self
+        item.menu = menu
+        statusItem = item
+        updateIcon()
+    }
+
+    func applyStatusItemVisibility() {
+        if JorvikStatusItemVisibility.isVisible {
+            if statusItem == nil { createStatusItem() }
+        } else if let item = statusItem {
+            NSStatusBar.system.removeStatusItem(item)
+            statusItem = nil
+        }
+    }
 
     // One-shot removal of the user-chosen pill colour key from the old design.
     // The new pill uses fixed grey/light colours; the key is dead weight.
@@ -144,7 +170,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let symbolName = engine.isActive
             ? (engine.isEnabled ? "globe.badge.chevron.backward" : "globe")
             : "globe"
-        statusItem.button?.image = JorvikMenuBarPill.icon(
+        statusItem?.button?.image = JorvikMenuBarPill.icon(
             symbolName: symbolName,
             accessibilityDescription: "Browser Commander"
         )
