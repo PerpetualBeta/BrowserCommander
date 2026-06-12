@@ -139,6 +139,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func createStatusItem() {
         guard JorvikStatusItemVisibility.isVisible else { return }
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        // Persist the item's menu-bar slot across launches (and let a user ⌘-drag stick).
+        item.autosaveName = "BrowserCommanderStatusItem"
         let menu = NSMenu()
         menu.delegate = self
         item.menu = menu
