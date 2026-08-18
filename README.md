@@ -59,7 +59,7 @@ All shortcuts are configurable in Settings.
 
 ### Supported Browsers
 
-Safari, Chrome, Edge, Firefox, Arc, Brave, Opera, Vivaldi, Orion, Chromium, Zen, and more — 18 browsers in total.
+Safari, Chrome, Edge, Firefox, Arc, Brave, Opera, Vivaldi, Orion, Chromium, Zen, SigmaOS, Waterfox, LibreWolf, Mullvad Browser, Tor Browser, and more.
 
 ## Settings
 
