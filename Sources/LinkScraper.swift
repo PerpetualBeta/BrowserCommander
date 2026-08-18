@@ -15,9 +15,13 @@ enum LinkScraper {
     private static let maxVisited = 25000
     /// Maximum number of links to collect
     private static let maxLinks = 1000
+    /// AX messages to an unresponsive app block for 6 seconds each by default;
+    /// a stalled browser must not wedge a scrape for minutes.
+    private static let axMessagingTimeout: Float = 0.5
 
     static func scrapeLinks(pid: pid_t) -> [ScrapedLink] {
         let app = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(app, axMessagingTimeout)
 
         // Get the focused window
         var windowValue: CFTypeRef?

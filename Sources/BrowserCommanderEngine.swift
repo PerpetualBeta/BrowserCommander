@@ -181,6 +181,7 @@ final class BrowserCommanderEngine {
 
     private var eventTap: CFMachPort?
     private var permissionTimer: Timer?
+    private var scrapeInFlight = false
     private let linkHUD = LinkHUDPanel()
 
     func updateLinkHUDHotkey(keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
@@ -301,12 +302,18 @@ final class BrowserCommanderEngine {
     }
 
     private func showLinkNavigator() {
+        // One scrape at a time — mashing the hotkey while a slow page is
+        // being crawled must not stack up concurrent scrapes
+        guard !scrapeInFlight else { return }
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return }
+        scrapeInFlight = true
         let pid = frontApp.processIdentifier
         DispatchQueue.global(qos: .userInitiated).async {
             let links = LinkScraper.scrapeLinks(pid: pid)
             DispatchQueue.main.async { [weak self] in
-                guard let self, !links.isEmpty else { return }
+                guard let self else { return }
+                self.scrapeInFlight = false
+                guard !links.isEmpty else { return }
                 self.linkHUD.show(links: links, browserPID: pid)
             }
         }
