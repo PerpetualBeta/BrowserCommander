@@ -36,13 +36,13 @@ Both shortcuts are fully configurable in Settings.
 
 ### Link Navigator
 
-Press **⌃⌥⇧⌘L** (Hyper+L) to open the Link Navigator — a floating HUD that lists every link on the current page. Type to filter, navigate with arrow keys, and press Return to go there.
+Press `control` `option` `shift` `command` `L` (Hyper+L) to open the Link Navigator — a floating HUD that lists every link on the current page. Type to filter, navigate with arrow keys, and press Return to go there.
 
 | Key | Action |
 |-----|--------|
-| **↑** / **↓** | Navigate links |
-| **Return** | Open selected link |
-| **Escape** | Dismiss |
+| `up` / `down` | Navigate links |
+| `return` | Open selected link |
+| `esc` | Dismiss |
 | **Type** | Filter by title or URL |
 
 The Link Navigator scrapes links from the browser's Accessibility tree — up to 1,000 links per page, deduplicated by URL. It works with any browser that exposes standard link elements.
@@ -53,7 +53,7 @@ The Link Navigator scrapes links from the browser's Accessibility tree — up to
 |--------|---------|:---:|
 | Go Back | Backspace | Yes |
 | Go Forward | Shift+Backspace | Yes |
-| Link Navigator | ⌃⌥⇧⌘L | Yes |
+| Link Navigator | `control` `option` `shift` `command` `L` | Yes |
 
 All shortcuts are configurable in Settings.
 
@@ -68,7 +68,7 @@ Right-click the globe icon and choose **Settings...** to configure:
 - **Enable/Disable** — toggle browser key remapping
 - **Go Back shortcut** — customise the go back hotkey (default: Backspace)
 - **Go Forward shortcut** — customise the go forward hotkey (default: Shift+Backspace)
-- **Link Navigator shortcut** — customise the link navigator hotkey (default: ⌃⌥⇧⌘L)
+- **Link Navigator shortcut** — customise the link navigator hotkey (default: `control` `option` `shift` `command` `L`)
 - **Accessibility permission** — status display and grant button
 - **Show icon in menu bar** — hide the globe status icon while Browser Commander keeps running (still reachable via its keyboard shortcut); the choice persists across launches, including login auto-start. *Shown only on macOS 14–15 — on macOS 26 (Tahoe) and later, use System Settings → Menu Bar, which provides this natively.*
 - **Menu bar icon pill** — optional grey background for stronger contrast on busy or wallpaper-tinted menu bars (off by default)
