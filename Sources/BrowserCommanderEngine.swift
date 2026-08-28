@@ -70,11 +70,11 @@ private func commanderCallback(
         if let tap = _commanderTap {
             CGEvent.tapEnable(tap: tap, enable: true)
         }
-        return Unmanaged.passRetained(event)
+        return Unmanaged.passUnretained(event)
     }
 
     guard _isEnabled, type == .keyDown else {
-        return Unmanaged.passRetained(event)
+        return Unmanaged.passUnretained(event)
     }
 
     let keyCode = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
@@ -85,7 +85,7 @@ private func commanderCallback(
           let bundleID = frontApp.bundleIdentifier,
           browserBundleIDs.contains(bundleID)
     else {
-        return Unmanaged.passRetained(event)
+        return Unmanaged.passUnretained(event)
     }
 
     // Link HUD hotkey
@@ -103,13 +103,13 @@ private func commanderCallback(
 
     if isGoBack || isGoForward {
         if _linkHUDIsVisible {
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
         if isTextFieldFocused(pid: frontApp.processIdentifier) {
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
         if isOtherAppFocused(browserPID: frontApp.processIdentifier) {
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
         if isGoBack {
             DispatchQueue.main.async { _onAction?(.goBack) }
@@ -120,7 +120,7 @@ private func commanderCallback(
         }
     }
 
-    return Unmanaged.passRetained(event)
+    return Unmanaged.passUnretained(event)
 }
 
 /// Checks if the system-wide focused element belongs to a different process than the browser
