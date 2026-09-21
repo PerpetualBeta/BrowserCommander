@@ -15,17 +15,27 @@ struct JorvikShortcutRecorder: View {
     @State private var shortcutText: String = ""
     @State private var isRecording = false
     @State private var localMonitor: Any?
-    @State private var globalMonitor: Any?
+    // There is no global key monitor, deliberately.
+    //
+    // Recording used to install one alongside the local monitor, to catch
+    // keystrokes arriving while this app was not frontmost. That needs an
+    // Accessibility grant, and without one the monitor is created and its
+    // handler never fires — dead code that cost the consuming app a Grant
+    // Access button for the right to read input across every other application
+    // on the machine.
+    //
+    // It was never reachable anyway: recording starts when the user clicks the
+    // field, so this app IS frontmost and the local monitor has the keystroke.
 
     var body: some View {
         HStack {
             Text(label)
             Spacer()
             if isRecording {
-                Text("Press shortcut\u{2026}")
+                Text(L10n.string("shortcut.press", defaultValue: "Press shortcut\u{2026}"))
                     .foregroundStyle(.orange)
                     .font(.caption)
-                Button("Cancel") {
+                Button(L10n.string("shortcut.cancel", defaultValue: "Cancel")) {
                     stopRecording()
                 }
                 .font(.caption)
@@ -33,7 +43,7 @@ struct JorvikShortcutRecorder: View {
                 Text(shortcutText)
                     .foregroundStyle(.secondary)
                     .font(.caption)
-                Button("Change\u{2026}") {
+                Button(L10n.string("shortcut.change", defaultValue: "Change\u{2026}")) {
                     startRecording()
                 }
                 .font(.caption)
@@ -82,15 +92,10 @@ struct JorvikShortcutRecorder: View {
             handleEvent(event)
             return nil
         }
-
-        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
-            handleEvent(event)
-        }
     }
 
     private func stopRecording() {
         if let m = localMonitor { NSEvent.removeMonitor(m); localMonitor = nil }
-        if let m = globalMonitor { NSEvent.removeMonitor(m); globalMonitor = nil }
         isRecording = false
 
         // Re-enable event tap
