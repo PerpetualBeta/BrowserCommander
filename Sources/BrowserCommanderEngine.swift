@@ -6,6 +6,17 @@ import ApplicationServices
 private var _commanderTap: CFMachPort?
 var _isEnabled: Bool = true
 private var _onAction: ((CommanderAction) -> Void)?
+/// Whether a binding is set at all.
+///
+/// Shortcuts can be cleared from Settings, and a cleared one is stored as key
+/// code 0 with no modifiers. **Key code 0 is the letter A**, so without this
+/// every cleared shortcut would silently rebind itself to a bare A. Note that
+/// "no modifiers" alone cannot mean unset here: Go Back ships as Backspace with
+/// no modifiers.
+private func isBound(_ keyCode: UInt16, _ modifiers: NSEvent.ModifierFlags) -> Bool {
+    keyCode != 0 || !modifiers.intersection([.command, .control, .option, .shift]).isEmpty
+}
+
 private var _linkHUDKeyCode: UInt16 = 37  // L
 private var _linkHUDModifiers: NSEvent.ModifierFlags = [.command, .control, .option, .shift]
 private var _goBackKeyCode: UInt16 = 51       // Backspace
@@ -89,8 +100,15 @@ private func commanderCallback(
     }
 
     // Link HUD hotkey
+    //
+    // `isBound` first, always. keyCode 0 is the letter A, so a cleared binding
+    // of (0, no modifiers) matches a bare A keypress. This one is worse than
+    // the two below: it uses `contains`, and `modifiers.contains([])` is true
+    // for every keystroke, so an unset binding would fire the HUD on every A
+    // typed in a browser.
     let linkMods = _linkHUDModifiers.intersection([.command, .control, .option, .shift])
-    if keyCode == _linkHUDKeyCode && modifiers.contains(linkMods) {
+    if isBound(_linkHUDKeyCode, _linkHUDModifiers)
+        && keyCode == _linkHUDKeyCode && modifiers.contains(linkMods) {
         DispatchQueue.main.async { _onAction?(.showLinkHUD) }
         return nil
     }
@@ -98,8 +116,10 @@ private func commanderCallback(
     // Go Back / Go Forward
     let goBackMods = _goBackModifiers.intersection([.command, .control, .option, .shift])
     let goForwardMods = _goForwardModifiers.intersection([.command, .control, .option, .shift])
-    let isGoBack = keyCode == _goBackKeyCode && modifiers == goBackMods
-    let isGoForward = keyCode == _goForwardKeyCode && modifiers == goForwardMods
+    let isGoBack = isBound(_goBackKeyCode, _goBackModifiers)
+        && keyCode == _goBackKeyCode && modifiers == goBackMods
+    let isGoForward = isBound(_goForwardKeyCode, _goForwardModifiers)
+        && keyCode == _goForwardKeyCode && modifiers == goForwardMods
 
     if isGoBack || isGoForward {
         if _linkHUDIsVisible {
@@ -212,20 +232,28 @@ final class BrowserCommanderEngine {
     /// Publish the current set of bindings to the JorvikKit registry so other
     /// apps (ShortcutHUD) can list them. All three bindings are browser-only.
     private func republishHotkeys() {
-        JorvikHotkeyRegistry.publish([
-            JorvikHotkey(actionTitle: "Show Link HUD",
-                         keyCode: _linkHUDKeyCode,
-                         modifiers: _linkHUDModifiers,
-                         activeContext: .browser),
-            JorvikHotkey(actionTitle: "Go Back",
-                         keyCode: _goBackKeyCode,
-                         modifiers: _goBackModifiers,
-                         activeContext: .browser),
-            JorvikHotkey(actionTitle: "Go Forward",
-                         keyCode: _goForwardKeyCode,
-                         modifiers: _goForwardModifiers,
-                         activeContext: .browser),
-        ])
+        // Cleared bindings are left out rather than published as key code 0,
+        // which ShortcutHUD would otherwise list as the letter A.
+        var all: [JorvikHotkey] = []
+        if isBound(_linkHUDKeyCode, _linkHUDModifiers) {
+            all.append(JorvikHotkey(actionTitle: "Show Link HUD",
+                                    keyCode: _linkHUDKeyCode,
+                                    modifiers: _linkHUDModifiers,
+                                    activeContext: .browser))
+        }
+        if isBound(_goBackKeyCode, _goBackModifiers) {
+            all.append(JorvikHotkey(actionTitle: "Go Back",
+                                    keyCode: _goBackKeyCode,
+                                    modifiers: _goBackModifiers,
+                                    activeContext: .browser))
+        }
+        if isBound(_goForwardKeyCode, _goForwardModifiers) {
+            all.append(JorvikHotkey(actionTitle: "Go Forward",
+                                    keyCode: _goForwardKeyCode,
+                                    modifiers: _goForwardModifiers,
+                                    activeContext: .browser))
+        }
+        JorvikHotkeyRegistry.publish(all)
     }
 
     func start() {
@@ -315,9 +343,9 @@ final class BrowserCommanderEngine {
         guard let frontApp = NSWorkspace.shared.frontmostApplication else { return }
         scrapeInFlight = true
         let pid = frontApp.processIdentifier
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let links = LinkScraper.scrapeLinks(pid: pid)
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 guard let self else { return }
                 self.scrapeInFlight = false
                 guard !links.isEmpty else { return }

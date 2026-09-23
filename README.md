@@ -55,7 +55,7 @@ The Link Navigator scrapes links from the browser's Accessibility tree — up to
 | Go Forward | Shift+Backspace | Yes |
 | Link Navigator | `control` `option` `shift` `command` `L` | Yes |
 
-All shortcuts are configurable in Settings.
+All shortcuts are configurable in Settings, and each can be cleared as well as changed. A cleared shortcut turns that feature off: nothing is bound, so nothing is intercepted.
 
 ### Supported Browsers
 

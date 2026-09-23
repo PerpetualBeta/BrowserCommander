@@ -86,11 +86,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func goBackShortcutDisplayString() -> String {
-        JorvikShortcutPanel.displayString(keyCode: goBackKeyCode, modifiers: goBackModifiers)
+        // Say so rather than rendering key code 0 as the letter A.
+        guard goBackKeyCode != 0 || !goBackModifiers.isEmpty else { return "Not set" }
+        return JorvikShortcutPanel.displayString(keyCode: goBackKeyCode, modifiers: goBackModifiers)
     }
 
     func goForwardShortcutDisplayString() -> String {
-        JorvikShortcutPanel.displayString(keyCode: goForwardKeyCode, modifiers: goForwardModifiers)
+        // Say so rather than rendering key code 0 as the letter A.
+        guard goForwardKeyCode != 0 || !goForwardModifiers.isEmpty else { return "Not set" }
+        return JorvikShortcutPanel.displayString(keyCode: goForwardKeyCode, modifiers: goForwardModifiers)
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -185,7 +189,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func linkHUDShortcutDisplayString() -> String {
-        JorvikShortcutPanel.displayString(keyCode: linkHUDKeyCode, modifiers: linkHUDModifiers)
+        // Say so rather than rendering key code 0 as the letter A.
+        guard linkHUDKeyCode != 0 || !linkHUDModifiers.isEmpty else { return "Not set" }
+        return JorvikShortcutPanel.displayString(keyCode: linkHUDKeyCode, modifiers: linkHUDModifiers)
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {

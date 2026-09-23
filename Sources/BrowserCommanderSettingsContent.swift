@@ -24,6 +24,12 @@ struct BrowserCommanderSettingsContent: View {
                 ),
                 displayString: { delegate.goBackShortcutDisplayString() },
                 onChanged: nil,
+                onClear: {
+                    // Both halves, or the engine keeps matching. The property
+                    // setters persist and re-publish on their own.
+                    delegate.goBackKeyCode = 0
+                    delegate.goBackModifiers = []
+                },
                 eventTapToDisable: nil
             )
             JorvikShortcutRecorder(
@@ -38,6 +44,12 @@ struct BrowserCommanderSettingsContent: View {
                 ),
                 displayString: { delegate.goForwardShortcutDisplayString() },
                 onChanged: nil,
+                onClear: {
+                    // Both halves, or the engine keeps matching. The property
+                    // setters persist and re-publish on their own.
+                    delegate.goForwardKeyCode = 0
+                    delegate.goForwardModifiers = []
+                },
                 eventTapToDisable: nil
             )
             JorvikShortcutRecorder(
@@ -52,6 +64,12 @@ struct BrowserCommanderSettingsContent: View {
                 ),
                 displayString: { delegate.linkHUDShortcutDisplayString() },
                 onChanged: nil,
+                onClear: {
+                    // Both halves, or the engine keeps matching. The property
+                    // setters persist and re-publish on their own.
+                    delegate.linkHUDKeyCode = 0
+                    delegate.linkHUDModifiers = []
+                },
                 eventTapToDisable: nil
             )
         }
