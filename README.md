@@ -57,6 +57,8 @@ The Link Navigator scrapes links from the browser's Accessibility tree — up to
 
 All shortcuts are configurable in Settings, and each can be cleared as well as changed. A cleared shortcut turns that feature off: nothing is bound, so nothing is intercepted.
 
+A shortcut you record must include `command`, `control` or `option`, unless it is a function key: F1 to F20 can be recorded on their own.
+
 ### Supported Browsers
 
 Safari, Chrome, Edge, Firefox, Arc, Brave, Opera, Vivaldi, Orion, Chromium, Zen, SigmaOS, Waterfox, LibreWolf, Mullvad Browser, Tor Browser, and more.

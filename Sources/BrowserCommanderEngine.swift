@@ -106,9 +106,14 @@ private func commanderCallback(
     // the two below: it uses `contains`, and `modifiers.contains([])` is true
     // for every keystroke, so an unset binding would fire the HUD on every A
     // typed in a browser.
+    //
+    // Exact equality, like Go Back and Go Forward, not `contains`. A function
+    // key may now be recorded with no modifier, and `contains([])` would let
+    // a bare F5 binding also swallow command-F5, which is the VoiceOver
+    // toggle. For the four-modifier default the two tests agree.
     let linkMods = _linkHUDModifiers.intersection([.command, .control, .option, .shift])
     if isBound(_linkHUDKeyCode, _linkHUDModifiers)
-        && keyCode == _linkHUDKeyCode && modifiers.contains(linkMods) {
+        && keyCode == _linkHUDKeyCode && modifiers == linkMods {
         DispatchQueue.main.async { _onAction?(.showLinkHUD) }
         return nil
     }
