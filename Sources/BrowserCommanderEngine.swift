@@ -337,8 +337,11 @@ final class BrowserCommanderEngine {
         else { return }
         keyDown.flags = flags
         keyUp.flags = flags
-        keyDown.post(tap: .cghidEventTap)
-        keyUp.post(tap: .cghidEventTap)
+        // Post after the session taps, not at the HID tap. The trigger is often
+        // a Hyper shortcut, so Caps Lock is still held when this fires, and
+        // HyperCaps' session tap would add all four modifiers to command-[.
+        keyDown.post(tap: .cgAnnotatedSessionEventTap)
+        keyUp.post(tap: .cgAnnotatedSessionEventTap)
     }
 
     private func showLinkNavigator() {
