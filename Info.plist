@@ -16,6 +16,8 @@
     <string>1.0</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Browser Commander opens the link you choose in the current tab of your browser.</string>
     <key>LSUIElement</key>
     <true/>
     <key>LSMinimumSystemVersion</key>

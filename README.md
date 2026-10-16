@@ -83,6 +83,7 @@ Auto-updates are handled by Sparkle. Use the **Check for Updates…** entry in t
 ## Permissions
 
 - **Accessibility** — required for keyboard interception and reading browser UI. macOS will prompt on first use.
+- **Automation** (Safari, Chrome and other Chromium browsers): Browser Commander opens a link that you choose in the Link Navigator by telling the browser to load it in the current tab. macOS asks once for each browser.
 
 ## Architecture
 
@@ -91,9 +92,16 @@ Auto-updates are handled by Sparkle. Use the **Check for Updates…** entry in t
 | `BrowserCommanderEngine.swift` | CGEvent tap for keyboard shortcuts, action dispatch |
 | `LinkHUDPanel.swift` | Floating link navigator with filter, table view, navigation |
 | `LinkScraper.swift` | Accessibility tree traversal to extract page links |
+| `BrowserNavigation.swift` | Loads a URL in the current tab of the browser process that is in front |
+| `Log.swift` | Optional debug log, off by default |
 | `SharedTypes.swift` | Browser bundle IDs, text field detection, HUD panel delegate |
 | `AppDelegate.swift` | Menu bar setup, settings, hotkey storage |
 | `BrowserCommanderSettingsContent.swift` | SwiftUI settings panel |
+
+## Troubleshooting
+
+- **A link does not open.** Make sure that Browser Commander is allowed to control the browser, in System Settings > Privacy & Security > Automation. Browser Commander sends the command to the browser window that is in front. Before 2.1.12 it sent the command to the app by name. If a second copy of Safari was running for automation (Safari's WebDriver starts one), the command went to that copy, and nothing happened.
+- **Debug log.** To write a log to `~/Library/Logs/Browser Commander/browsercommander.log`, use `defaults write cc.jorviksoftware.BrowserCommander debugLogging -bool YES`. Each line records the browser, its process and the host of the address. The log does not record the full address. The log is off by default. To turn it off again, use `defaults delete cc.jorviksoftware.BrowserCommander debugLogging`. At 4 MB, Browser Commander moves the log to `browsercommander.log.1` and starts a new one. Thus the two files never use more than 8 MB. To change the limit, use `defaults write cc.jorviksoftware.BrowserCommander debugLogMaxBytes -int <bytes>`.
 
 ## Building from Source
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  Intentionally empty — the hardened runtime keeps Library Validation ON.
+  No library-validation exception: the hardened runtime keeps Library Validation ON.
   The release pipeline (jorvik-release/helpers/sign-framework.sh) re-signs the
   embedded Sparkle.framework and every nested XPC service / helper with the
   Jorvik Developer ID, leaf-first, so all loaded code shares the app's Team ID
@@ -14,5 +14,11 @@
   library-validation kill.
 -->
 <plist version="1.0">
-<dict/>
+<dict>
+    <!-- Apple Events from the app itself (BrowserNavigation.swift): the hardened
+         runtime blocks them without this. Added 2026-10-17, when navigation moved
+         from osascript to Scripting Bridge, to address the browser by process ID. -->
+    <key>com.apple.security.automation.apple-events</key>
+    <true/>
+</dict>
 </plist>

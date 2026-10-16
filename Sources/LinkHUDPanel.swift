@@ -1,42 +1,6 @@
 import AppKit
 import ApplicationServices
 
-/// Chromium-based bundle IDs (all share the same AppleScript dictionary)
-private let chromiumBundleIDs: Set<String> = [
-    "com.google.Chrome", "com.google.Chrome.canary",
-    "com.microsoft.edgemac", "com.brave.Browser",
-    "com.operasoftware.Opera", "com.vivaldi.Vivaldi",
-    "company.thebrowser.Browser", "org.chromium.Chromium",
-    "app.zen-browser.zen",
-]
-
-private let safariBundleIDs: Set<String> = [
-    "com.apple.Safari", "com.apple.SafariTechnologyPreview",
-]
-
-/// Navigates the current tab of the given browser to a URL via osascript
-func navigateBrowserTab(bundleID: String, url: String) {
-    let escaped = url.replacingOccurrences(of: "\\", with: "\\\\")
-                    .replacingOccurrences(of: "\"", with: "\\\"")
-
-    let script: String
-    if safariBundleIDs.contains(bundleID) {
-        script = "tell application id \"\(bundleID)\" to set URL of document 1 to \"\(escaped)\""
-    } else if chromiumBundleIDs.contains(bundleID) {
-        script = "tell application id \"\(bundleID)\" to set URL of active tab of front window to \"\(escaped)\""
-    } else {
-        script = "tell application id \"\(bundleID)\" to open location \"\(escaped)\""
-    }
-
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-    process.arguments = ["-e", script]
-    process.standardOutput = FileHandle.nullDevice
-    process.standardError = FileHandle.nullDevice
-    try? process.run()
-    process.waitUntilExit()
-}
-
 /// A floating HUD panel that displays browser links for keyboard navigation.
 /// Type to filter, up/down to select, Enter to activate, Escape to dismiss.
 @MainActor
@@ -258,13 +222,14 @@ final class LinkHUDPanel: NSObject, HUDKeyPanelDelegate {
         guard !link.url.isEmpty else { return }
 
         let urlString = link.url
-        let bundleID = browserApp?.bundleIdentifier ?? ""
+        guard let browser = browserApp, let bundleID = browser.bundleIdentifier else { return }
+        let pid = browser.processIdentifier
 
         dismiss()
 
-        // Navigate in the current tab via AppleScript
+        // Navigate in the current tab of that browser process (BrowserNavigation.swift)
         DispatchQueue.global(qos: .userInitiated).async {
-            navigateBrowserTab(bundleID: bundleID, url: urlString)
+            navigateBrowserTab(pid: pid, bundleID: bundleID, url: urlString)
         }
     }
 
